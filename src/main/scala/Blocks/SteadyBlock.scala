@@ -1,5 +1,7 @@
 package Blocks
 
-class SteadyBlock(color: String) extends Block(color) {
+import scalafx.scene.paint.Color
+
+class SteadyBlock(color: Color) extends Block(color) {
 
 }

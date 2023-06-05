@@ -2,9 +2,11 @@ import scala.collection.mutable.ArrayBuffer
 import Blocks.{Block, PlayingBlock, SteadyBlock}
 import Utils.{MoveDirection, RotateDirection, Vec2d}
 import com.sun.tools.classfile.TypeAnnotation.Position
+import scalafx.scene.canvas.Canvas
+import scalafx.scene.paint.Color
 
 
-class Board(val width: Int, val height: Int):
+class Board(val width: Int, val height: Int, private val gameCanvas: Canvas):
     private val boardArray: ArrayBuffer[ArrayBuffer[Block]] =
         generateBoardArray()
 
@@ -36,6 +38,8 @@ class Board(val width: Int, val height: Int):
           .map(v => v + playingBlock.position)
           .map(v => v.toTuple)
 
+
+        //console render
         val stringBuilder = new StringBuilder
         val horizontalLine = List.fill(2 * width + 3)('=').mkString
 
@@ -52,7 +56,7 @@ class Board(val width: Int, val height: Int):
                 val block = if playingLocations.contains((x, y)) then '#' else boardArray(y)(x)
                 stringBuilder.append(' ')
                 stringBuilder.append(
-                    if (block == null) " " else block
+                 if (block == null) " " else block
                 )
             }
             stringBuilder.append(" |\n")
@@ -61,6 +65,29 @@ class Board(val width: Int, val height: Int):
         stringBuilder.append('\n')
 
         println(stringBuilder.toString())
+
+
+        //window render
+        val gc = gameCanvas.graphicsContext2D
+
+        gc.fill = Color.Black
+        gc.fillRect(0, 0, gameCanvas.width.get, gameCanvas.height.get)
+
+        val blockWidth = gameCanvas.width.get / width
+        val blockHeight = gameCanvas.height.get / height
+
+        for (y <- height - 1 to 0 by -1) {
+            for (x <- 0 until width) {
+                if playingLocations.contains((x, y)) then {
+                    gc.fill = playingBlock.color
+                    gc.fillRect(blockWidth * x, blockHeight * (height - y - 1), blockWidth, blockHeight)
+                }
+                if boardArray(y)(x) != null then {
+                    gc.fill = boardArray(y)(x).color
+                    gc.fillRect(blockWidth * x, blockHeight * (height - y - 1), blockWidth, blockHeight)
+                }
+            }
+        }
     }
 
     def canBlockMove(playingBlock: PlayingBlock, direction: Either[MoveDirection, RotateDirection]): Boolean = {

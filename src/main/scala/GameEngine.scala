@@ -1,11 +1,13 @@
 import Blocks.{BlockShapeT, PlayingBlock}
 import Utils.{MoveDirection, RotateDirection, Vec2d}
+import scalafx.scene.canvas.Canvas
+import scalafx.scene.paint.Color
 
 import scala.concurrent.duration.{Duration, SECONDS}
+import scala.util.Random
 
-
-class GameEngine(private val boardSize: Vec2d):
-    private val gameBoard: Board = Board(boardSize.x, boardSize.y)
+class GameEngine(private val boardSize: Vec2d, private val gameCanvas: Canvas) extends Runnable:
+    private val gameBoard: Board = Board(boardSize.x, boardSize.y, gameCanvas)
     private var playingBlock: PlayingBlock = null
 
     private val sleepDuration: Duration = Duration(0.8, SECONDS)
@@ -14,12 +16,26 @@ class GameEngine(private val boardSize: Vec2d):
     private var score: Int = 0
     private val scoring = List(0, 100, 300, 500, 800)
 
+    private val moves = MoveParser.parse(
+    List(
+        // First block
+        "d", "d", "l", "d", "d", "d",
+        // Second block
+        "rr", "l", "l", "d", "d", "d",
+        // Third block
+        "rl", "r", "d", "d", "d", "d",
+        // Fourth block
+        "d", "d", "d", "rr", "rr", "d",
+    ))
+
     def increaseScore(linesCleared: Int): Unit = {
         score += scoring(linesCleared)
     }
 
-    def simulate(moves: List[Either[MoveDirection, RotateDirection]]): Unit = {
-        playingBlock = BlockShapeT("r", startingPosition)
+    def getRandomBlockColor: Color = Random.shuffle(List(Color.Red,Color.Blue,Color.Green,Color.Aqua)).head
+
+    def run(): Unit = {
+        playingBlock = BlockShapeT(getRandomBlockColor, startingPosition)
 
 //        while (true) {
         for (move <- moves) {
@@ -33,7 +49,7 @@ class GameEngine(private val boardSize: Vec2d):
                 val fullRows = gameBoard.removeFullRows(playingBlock)
                 increaseScore(fullRows)
 
-                playingBlock = BlockShapeT("r", startingPosition)
+                playingBlock = BlockShapeT(getRandomBlockColor, startingPosition)
             }
 
             Thread.sleep(sleepDuration.toMillis)

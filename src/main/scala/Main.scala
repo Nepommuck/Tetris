@@ -5,40 +5,30 @@ import scalafx.application.JFXApp3
 import scalafx.application.JFXApp3.PrimaryStage
 import scalafx.geometry.Insets
 import scalafx.scene.Scene
-import scalafx.scene.layout.HBox
+import scalafx.scene.canvas.Canvas
+import scalafx.scene.layout.VBox
 import scalafx.scene.text.Text
 
 object Main extends JFXApp3 {
     override def start(): Unit = {
+        val gameCanvas = new Canvas(600, 600)
         stage = new PrimaryStage {
             title = "Tetris"
             scene = new Scene {
-                content = new HBox {
+                content = new VBox {
                     padding = Insets(20)
                     children = Seq(
                         new Text {
-                            text = "Tu bedzie tetris"
-                            style = "-fx-font-size: 48pt"
-                        }
+                            text = "niesamowity tetris"
+                            style = "-fx-font-size: 20pt"
+                        },
+                        gameCanvas
                     )
                 }
             }
         }
 
-        val engine = GameEngine(Vec2d(4, 6))
-
-        val input = List(
-            // First block
-            "d", "d", "l", "d", "d", "d",
-            // Second block
-            "rr", "l", "l", "d", "d", "d",
-            // Third block
-            "rl", "r", "d", "d", "d", "d",
-            // Fourth block
-            "d", "d", "d", "rr", "rr", "d",
-        )
-        println(MoveParser.parse(input))
-        engine.simulate(MoveParser.parse(input))
+        new Thread(new GameEngine(Vec2d(4,6), gameCanvas)).start()
     }
 }
 
