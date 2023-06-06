@@ -1,4 +1,4 @@
-import Blocks.{BlockShapeT, PlayingBlock}
+import Blocks.{BlockShapeI, BlockShapeL, BlockShapeL2, BlockShapeS, BlockShapeS2, BlockShapeSquare, BlockShapeT, PlayingBlock}
 import Utils.{MoveDirection, RotateDirection, Vec2d}
 import scalafx.scene.canvas.Canvas
 import scalafx.scene.paint.Color
@@ -16,43 +16,45 @@ class GameEngine(private val boardSize: Vec2d, private val gameCanvas: Canvas) e
     private var score: Int = 0
     private val scoring = List(0, 100, 300, 500, 800)
 
-    private val moves = MoveParser.parse(
-    List(
-        // First block
-        "d", "d", "l", "d", "d", "d",
-        // Second block
-        "rr", "l", "l", "d", "d", "d",
-        // Third block
-        "rl", "r", "d", "d", "d", "d",
-        // Fourth block
-        "d", "d", "d", "rr", "rr", "d",
-    ))
-
     def increaseScore(linesCleared: Int): Unit = {
         score += scoring(linesCleared)
     }
 
     def getRandomBlockColor: Color = Random.shuffle(List(Color.Red,Color.Blue,Color.Green,Color.Aqua)).head
 
-    def run(): Unit = {
-        playingBlock = BlockShapeT(getRandomBlockColor, startingPosition)
+    def spawnNewBlock(): Unit = {
 
-//        while (true) {
-        for (move <- moves) {
-            gameBoard.display(playingBlock, Some(score))
+        Random.nextInt(7) match {
+            case 0 => playingBlock = BlockShapeT(getRandomBlockColor, startingPosition)
+            case 1 => playingBlock = BlockShapeI(getRandomBlockColor, startingPosition)
+            case 2 => playingBlock = BlockShapeL(getRandomBlockColor, startingPosition)
+            case 3 => playingBlock = BlockShapeL2(getRandomBlockColor, startingPosition)
+            case 4 => playingBlock = BlockShapeS(getRandomBlockColor, startingPosition)
+            case 5 => playingBlock = BlockShapeS2(getRandomBlockColor, startingPosition)
+            case 6 => playingBlock = BlockShapeSquare(getRandomBlockColor, startingPosition)
+        }
 
-            if (gameBoard.canBlockMove(playingBlock, move)) {
-                playingBlock.move(move)
-            }
-            else if (move == Left(MoveDirection.Down)) {
-                gameBoard.place(playingBlock)
-                val fullRows = gameBoard.removeFullRows(playingBlock)
-                increaseScore(fullRows)
+    }
 
-                playingBlock = BlockShapeT(getRandomBlockColor, startingPosition)
-            }
-
-            Thread.sleep(sleepDuration.toMillis)
+    def moveBlock(move: Either[MoveDirection, RotateDirection]) : Unit = {
+        if move == null then return
+        if (gameBoard.canBlockMove(playingBlock, move)) {
+            playingBlock.move(move)
+        }
+        else if (move == Left(MoveDirection.Down)) {
+            gameBoard.place(playingBlock)
+            val fullRows = gameBoard.removeFullRows(playingBlock)
+            increaseScore(fullRows)
+            spawnNewBlock()
         }
         gameBoard.display(playingBlock, Some(score))
+    }
+
+    def run(): Unit = {
+        spawnNewBlock()
+        gameBoard.display(playingBlock, Some(score))
+        while (true) {
+            Thread.sleep(sleepDuration.toMillis)
+            moveBlock(Left(MoveDirection.Down))
+        }
     }
