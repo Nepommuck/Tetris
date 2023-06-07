@@ -8,8 +8,8 @@ object MoveParser:
             case "a" => Left(MoveDirection.Left)
             case "d" => Left(MoveDirection.Right)
 
-            case "q" => Right(RotateDirection.RotateRight)
-            case "e" => Right(RotateDirection.RotateLeft)
+            case "e" => Right(RotateDirection.RotateRight)
+            case "q" => Right(RotateDirection.RotateLeft)
             case _ => null
         }
 

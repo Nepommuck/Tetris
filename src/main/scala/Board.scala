@@ -70,7 +70,7 @@ class Board(val width: Int, val height: Int, private val gameCanvas: Canvas):
         //window render
         val gc = gameCanvas.graphicsContext2D
 
-        gc.fill = Color.Black
+        gc.fill = Color.DarkGray
         gc.fillRect(0, 0, gameCanvas.width.get, gameCanvas.height.get)
 
         val blockWidth = gameCanvas.width.get / width
@@ -79,12 +79,16 @@ class Board(val width: Int, val height: Int, private val gameCanvas: Canvas):
         for (y <- height - 1 to 0 by -1) {
             for (x <- 0 until width) {
                 if playingLocations.contains((x, y)) then {
-                    gc.fill = playingBlock.color
+                    gc.fill = Color.Black
                     gc.fillRect(blockWidth * x, blockHeight * (height - y - 1), blockWidth, blockHeight)
+                    gc.fill = playingBlock.color
+                    gc.fillRect(blockWidth * x + blockWidth * 0.1, blockHeight * (height - y - 1) + blockHeight * 0.1, blockWidth*0.8, blockHeight*0.8)
                 }
                 if boardArray(y)(x) != null then {
-                    gc.fill = boardArray(y)(x).color
+                    gc.fill = Color.Black
                     gc.fillRect(blockWidth * x, blockHeight * (height - y - 1), blockWidth, blockHeight)
+                    gc.fill = boardArray(y)(x).color
+                    gc.fillRect(blockWidth * x + blockWidth * 0.1, blockHeight * (height - y - 1) + blockHeight * 0.1, blockWidth * 0.8, blockHeight * 0.8)
                 }
             }
         }

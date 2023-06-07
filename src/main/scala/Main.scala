@@ -9,7 +9,9 @@ import scalafx.scene.canvas.Canvas
 import scalafx.scene.input.KeyEvent
 import scalafx.scene.layout.VBox
 import scalafx.scene.text.Text
-import scalafx.Includes._
+import scalafx.Includes.*
+import scalafx.beans.binding.{Bindings, StringBinding}
+import scalafx.scene.control.Label
 
 object Main extends JFXApp3 {
     override def start(): Unit = {
@@ -22,7 +24,8 @@ object Main extends JFXApp3 {
                     padding = Insets(20)
                     children = Seq(
                         new Text {
-                            text = "niesamowity tetris"
+                            text <== Bindings.createStringBinding(() => "Score: " + gameEngine.score.toString)
+                            //text <== gameEngine.score.asString //TODO doesnt work
                             style = "-fx-font-size: 20pt"
                         },
                         gameCanvas,

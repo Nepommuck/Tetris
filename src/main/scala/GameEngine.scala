@@ -13,25 +13,25 @@ class GameEngine(private val boardSize: Vec2d, private val gameCanvas: Canvas) e
     private val sleepDuration: Duration = Duration(0.8, SECONDS)
 //    private val sleepDuration: Duration = Duration(0.01, SECONDS)
     private val startingPosition = Vec2d(boardSize.x / 2, boardSize.y - 2)
-    private var score: Int = 0
+    var score: Int = 0
     private val scoring = List(0, 100, 300, 500, 800)
 
     def increaseScore(linesCleared: Int): Unit = {
         score += scoring(linesCleared)
     }
 
-    def getRandomBlockColor: Color = Random.shuffle(List(Color.Red,Color.Blue,Color.Green,Color.Aqua)).head
+    //def getRandomBlockColor: Color = Random.shuffle(List(Color.Red,Color.Blue,Color.Green,Color.Aqua)).head
 
     def spawnNewBlock(): Unit = {
 
         Random.nextInt(7) match {
-            case 0 => playingBlock = BlockShapeT(getRandomBlockColor, startingPosition)
-            case 1 => playingBlock = BlockShapeI(getRandomBlockColor, startingPosition)
-            case 2 => playingBlock = BlockShapeL(getRandomBlockColor, startingPosition)
-            case 3 => playingBlock = BlockShapeL2(getRandomBlockColor, startingPosition)
-            case 4 => playingBlock = BlockShapeS(getRandomBlockColor, startingPosition)
-            case 5 => playingBlock = BlockShapeS2(getRandomBlockColor, startingPosition)
-            case 6 => playingBlock = BlockShapeSquare(getRandomBlockColor, startingPosition)
+            case 0 => playingBlock = BlockShapeT(startingPosition)
+            case 1 => playingBlock = BlockShapeI(startingPosition)
+            case 2 => playingBlock = BlockShapeL(startingPosition)
+            case 3 => playingBlock = BlockShapeL2(startingPosition)
+            case 4 => playingBlock = BlockShapeS(startingPosition)
+            case 5 => playingBlock = BlockShapeS2(startingPosition)
+            case 6 => playingBlock = BlockShapeSquare(startingPosition)
         }
 
     }
