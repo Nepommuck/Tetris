@@ -46,7 +46,14 @@ class GameEngine(private val boardSize: Vec2d, private val gameCanvas: Canvas) e
 
 
     def handleAction() : Unit = {
-        val moveAsDirection = if (playerAction != null) playerAction.toDirection else null
+        var moveAsDirection = if (playerAction != null) playerAction.toDirection else null
+
+        // Move to the very bottom
+        if (playerAction == PlayerAction.Drop) {
+            moveAsDirection = PlayerAction.MoveDown.toDirection
+            while (gameBoard.canBlockMove(playingBlock, moveAsDirection))
+                playingBlock.move(moveAsDirection)
+        }
 
         if (moveAsDirection != null) {
             if (gameBoard.canBlockMove(playingBlock, moveAsDirection))
@@ -59,9 +66,6 @@ class GameEngine(private val boardSize: Vec2d, private val gameCanvas: Canvas) e
                 spawnNewBlock()
             }
         }
-        else if (playerAction == PlayerAction.Drop)
-            println("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
-
         playerAction = null
     }
 
