@@ -13,15 +13,18 @@ class Board(val width: Int, val height: Int, private val gameCanvas: Canvas):
     private val minCorner = Vec2d(0, 0)
     private val maxCorner = Vec2d(width - 1, height - 1)
 
+    private def generateEmptyBoardArrayRow(): ArrayBuffer[Block] = {
+        val result = ArrayBuffer[Block]()
+        for (_ <- 0 until width) {
+            result += null
+        }
+        result
+    }
+
     private def generateBoardArray():  ArrayBuffer[ArrayBuffer[Block]] = {
         val array = ArrayBuffer[ArrayBuffer[Block]]()
-        for (_ <- 0 until height) {
-            val row = ArrayBuffer[Block]()
-            for (_ <- 0 until width) {
-                row += null
-            }
-            array += row
-        }
+        for (_ <- 0 until height)
+            array += generateEmptyBoardArrayRow()
         array
     }
 
@@ -148,8 +151,7 @@ class Board(val width: Int, val height: Int, private val gameCanvas: Canvas):
             for (y <- row until height - 1)
                 boardArray(y) = boardArray(y + 1)
 
-            for (x <- 0 until width)
-                boardArray(height - 1)(x) = null
+            boardArray(height - 1) = generateEmptyBoardArrayRow()
         }
         fullRows.length
     }
