@@ -4,10 +4,11 @@ import Utils.{MoveDirection, RotateDirection, Vec2d}
 import com.sun.tools.classfile.TypeAnnotation.Position
 import scalafx.scene.canvas.Canvas
 import scalafx.scene.paint.Color
+import scalafx.scene.text.Font
 
 
 class Board(val width: Int, val height: Int, private val gameCanvas: Canvas):
-    private val boardArray: ArrayBuffer[ArrayBuffer[Block]] =
+    private var boardArray: ArrayBuffer[ArrayBuffer[Block]] =
         generateBoardArray()
 
     private val minCorner = Vec2d(0, 0)
@@ -26,6 +27,10 @@ class Board(val width: Int, val height: Int, private val gameCanvas: Canvas):
         for (_ <- 0 until height)
             array += generateEmptyBoardArrayRow()
         array
+    }
+
+    def reset() : Unit = {
+        boardArray = generateBoardArray()
     }
 
     private def getBlockAtPosition(position: Vec2d): Block = {
@@ -130,13 +135,19 @@ class Board(val width: Int, val height: Int, private val gameCanvas: Canvas):
         println(stringBuilder.toString())
     }
 
+    def clear(): Unit = {
+        val gc = gameCanvas.graphicsContext2D
+        gc.fill = Color.DarkGray
+        gc.fillRect(0, 0, gameCanvas.width.get, gameCanvas.height.get)
+    }
+
     // Window render
     def display(playingBlock: PlayingBlock, score: Option[Int] = None): Unit = {
         val playingLocations: List[(Int, Int)] = getPlayingBlockLocations(playingBlock)
 
+        clear()
         val gc = gameCanvas.graphicsContext2D
-        gc.fill = Color.DarkGray
-        gc.fillRect(0, 0, gameCanvas.width.get, gameCanvas.height.get)
+
 
         val blockWidth = gameCanvas.width.get / width
         val blockHeight = gameCanvas.height.get / height
@@ -163,6 +174,9 @@ class Board(val width: Int, val height: Int, private val gameCanvas: Canvas):
         val gc = gameCanvas.graphicsContext2D
         gc.fill = Color.Black
         gc.fillRect(0, 0, gameCanvas.width.get, gameCanvas.height.get)
+        gc.fill = Color.White
+        gc.setFont(new Font(gc.getFont.getName, 30));
+        gc.fillText("Game Over", gameCanvas.getWidth/4, gameCanvas.getHeight/2.2)
     }
 
     private def getPlayingBlockLocations(playingBlock: PlayingBlock): List[(Int, Int)] =

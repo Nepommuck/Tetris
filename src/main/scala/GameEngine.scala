@@ -4,10 +4,12 @@ import Utils.{PlayerAction, Vec2d}
 import scala.concurrent.duration.{Duration, SECONDS}
 import scala.util.Random
 import scalafx.scene.canvas.Canvas
+import scalafx.scene.control.Button
+import scalafx.scene.text.Text
 
 
-class GameEngine(private val boardSize: Vec2d, private val gameCanvas: Canvas) extends Runnable:
-    private var playing: Boolean = true
+class GameEngine(private val boardSize: Vec2d, private val gameCanvas: Canvas, private val scoreText: Text, private val playButton: Button) extends Runnable:
+    private var playing: Boolean = false
     private val gameBoard: Board = Board(boardSize.x, boardSize.y, gameCanvas)
     private var playingBlock: PlayingBlock = null
     private var playerAction: PlayerAction = null
@@ -22,6 +24,7 @@ class GameEngine(private val boardSize: Vec2d, private val gameCanvas: Canvas) e
 
     def increaseScore(linesCleared: Int): Unit = {
         score += scoring(linesCleared)
+        scoreText.text = "Score: " + score
     }
 
     //def getRandomBlockColor: Color = Random.shuffle(List(Color.Red,Color.Blue,Color.Green,Color.Aqua)).head
@@ -77,21 +80,37 @@ class GameEngine(private val boardSize: Vec2d, private val gameCanvas: Canvas) e
     }
 
     def run(): Unit = {
-        spawnNewBlock()
-        gameBoard.display(playingBlock, Some(score))
+        gameBoard.clear()
+        while (true) {
+            gameBoard.reset()
+            while (!playing) {
+                Thread.sleep(50)
+            }
+            score = 0
+            scoreText.text = "Score: 0"
+            playButton.visible = false
 
-        val timePerFrame = Duration(1.0 / FPS, SECONDS)
-        while (playing) {
-            Thread.sleep(timePerFrame.toMillis)
-            timeElapsed += timePerFrame
-
-            if (timeElapsed >= autoMovementDuration)
-                setPlayerAction(PlayerAction.MoveDown)
-
-            handleAction()
-            if (playingBlock == null)
-                playing = spawnNewBlock()
+            spawnNewBlock()
             gameBoard.display(playingBlock, Some(score))
+
+            val timePerFrame = Duration(1.0 / FPS, SECONDS)
+            while (playing) {
+                Thread.sleep(timePerFrame.toMillis)
+                timeElapsed += timePerFrame
+
+                if (timeElapsed >= autoMovementDuration)
+                    setPlayerAction(PlayerAction.MoveDown)
+
+                handleAction()
+                if (playingBlock == null)
+                    playing = spawnNewBlock()
+                gameBoard.display(playingBlock, Some(score))
+            }
+            gameBoard.displayGameOver()
+            playButton.visible = true
         }
-        gameBoard.displayGameOver()
+    }
+
+    def startGame(): Unit = {
+        playing = true
     }

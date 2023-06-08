@@ -12,7 +12,7 @@ object MoveParser:
             case "w" => RotateRight
             case "q" => RotateLeft
 
-            case "x" => Drop
+            case " " => Drop
             case _ => null
         }
 
