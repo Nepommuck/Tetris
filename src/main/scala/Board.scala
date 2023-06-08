@@ -144,12 +144,12 @@ class Board(val width: Int, val height: Int, private val gameCanvas: Canvas):
                 fullRows = fullRows :+ y
         }
         // Putting values one row lower
-        for (row <- fullRows)
-            for (y <- row until height-1)
-                boardArray(y) = boardArray(y+1)
+        for (row <- fullRows) {
+            for (y <- row until height - 1)
+                boardArray(y) = boardArray(y + 1)
 
-        for (x <- 0 until width)
-            boardArray(height-1)(x) = null
-
+            for (x <- 0 until width)
+                boardArray(height - 1)(x) = null
+        }
         fullRows.length
     }
