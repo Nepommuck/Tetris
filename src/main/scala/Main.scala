@@ -31,7 +31,7 @@ object Main extends JFXApp3 {
                         gameCanvas,
                     )
                 }
-                onKeyPressed = key => gameEngine.moveBlock(MoveParser.parse(key.getText))
+                onKeyPressed = key => gameEngine.setPlayerAction(MoveParser.parse(key.getText))
             }
         }
 

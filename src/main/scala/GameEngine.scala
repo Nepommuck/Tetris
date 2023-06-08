@@ -1,19 +1,24 @@
 import Blocks.{BlockShapeI, BlockShapeL, BlockShapeL2, BlockShapeS, BlockShapeS2, BlockShapeSquare, BlockShapeT, PlayingBlock}
 import Utils.{PlayerAction, Vec2d}
 
-import scalafx.scene.canvas.Canvas
 import scala.concurrent.duration.{Duration, SECONDS}
 import scala.util.Random
+import scalafx.scene.canvas.Canvas
+
 
 class GameEngine(private val boardSize: Vec2d, private val gameCanvas: Canvas) extends Runnable:
     private val gameBoard: Board = Board(boardSize.x, boardSize.y, gameCanvas)
     private var playingBlock: PlayingBlock = null
+    private var playerAction: PlayerAction = null
 
-    private val sleepDuration: Duration = Duration(0.8, SECONDS)
+    private val autoMovementDuration: Duration = Duration(0.5, SECONDS)
+    private var timeElapsed: Duration = Duration(0.0, SECONDS)
+
 //    private val sleepDuration: Duration = Duration(0.01, SECONDS)
     private val startingPosition = Vec2d(boardSize.x / 2, boardSize.y - 2)
     var score: Int = 0
     private val scoring = List(0, 100, 300, 500, 800)
+    private val FPS: Int = 24
 
     def increaseScore(linesCleared: Int): Unit = {
         score += scoring(linesCleared)
@@ -32,10 +37,15 @@ class GameEngine(private val boardSize: Vec2d, private val gameCanvas: Canvas) e
             case 5 => playingBlock = BlockShapeS2(startingPosition)
             case 6 => playingBlock = BlockShapeSquare(startingPosition)
         }
-
     }
 
-    def moveBlock(playerAction: PlayerAction) : Unit = {
+    def setPlayerAction(newPlayerAction: PlayerAction): Unit = {
+        playerAction = newPlayerAction
+        timeElapsed = Duration(0, SECONDS)
+    }
+
+
+    def handleAction() : Unit = {
         val moveAsDirection = if (playerAction != null) playerAction.toDirection else null
 
         if (moveAsDirection != null) {
@@ -52,14 +62,22 @@ class GameEngine(private val boardSize: Vec2d, private val gameCanvas: Canvas) e
         else if (playerAction == PlayerAction.Drop)
             println("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
 
-        gameBoard.display(playingBlock, Some(score))
+        playerAction = null
     }
 
     def run(): Unit = {
         spawnNewBlock()
         gameBoard.display(playingBlock, Some(score))
+
+        val timePerFrame = Duration(1.0 / FPS, SECONDS)
         while (true) {
-            Thread.sleep(sleepDuration.toMillis)
-            moveBlock(PlayerAction.MoveDown)
+            Thread.sleep(timePerFrame.toMillis)
+            timeElapsed += timePerFrame
+
+            if (timeElapsed >= autoMovementDuration)
+                setPlayerAction(PlayerAction.MoveDown)
+
+            handleAction()
+            gameBoard.display(playingBlock, Some(score))
         }
     }
