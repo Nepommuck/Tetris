@@ -1,8 +1,7 @@
 import Blocks.{BlockShapeI, BlockShapeL, BlockShapeL2, BlockShapeS, BlockShapeS2, BlockShapeSquare, BlockShapeT, PlayingBlock}
-import Utils.{MoveDirection, RotateDirection, Vec2d}
-import scalafx.scene.canvas.Canvas
-import scalafx.scene.paint.Color
+import Utils.{PlayerAction, Vec2d}
 
+import scalafx.scene.canvas.Canvas
 import scala.concurrent.duration.{Duration, SECONDS}
 import scala.util.Random
 
@@ -36,17 +35,23 @@ class GameEngine(private val boardSize: Vec2d, private val gameCanvas: Canvas) e
 
     }
 
-    def moveBlock(move: Either[MoveDirection, RotateDirection]) : Unit = {
-        if move == null then return
-        if (gameBoard.canBlockMove(playingBlock, move)) {
-            playingBlock.move(move)
+    def moveBlock(playerAction: PlayerAction) : Unit = {
+        val moveAsDirection = if (playerAction != null) playerAction.toDirection else null
+
+        if (moveAsDirection != null) {
+            if (gameBoard.canBlockMove(playingBlock, moveAsDirection))
+                playingBlock.move(moveAsDirection)
+
+            else if (playerAction == PlayerAction.MoveDown) {
+                gameBoard.place(playingBlock)
+                val fullRows = gameBoard.removeFullRows(playingBlock)
+                increaseScore(fullRows)
+                spawnNewBlock()
+            }
         }
-        else if (move == Left(MoveDirection.Down)) {
-            gameBoard.place(playingBlock)
-            val fullRows = gameBoard.removeFullRows(playingBlock)
-            increaseScore(fullRows)
-            spawnNewBlock()
-        }
+        else if (playerAction == PlayerAction.Drop)
+            println("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
+
         gameBoard.display(playingBlock, Some(score))
     }
 
@@ -55,6 +60,6 @@ class GameEngine(private val boardSize: Vec2d, private val gameCanvas: Canvas) e
         gameBoard.display(playingBlock, Some(score))
         while (true) {
             Thread.sleep(sleepDuration.toMillis)
-            moveBlock(Left(MoveDirection.Down))
+            moveBlock(PlayerAction.MoveDown)
         }
     }
