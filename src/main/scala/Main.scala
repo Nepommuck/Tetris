@@ -20,14 +20,18 @@ object Main extends JFXApp3 {
             text = "Score: 0"
             style = "-fx-font-size: 20pt"
         }
+
         val playButton = new Button("New Game")
         playButton.setFocusTraversable(false)
+
         val gameEngine = new GameEngine(Vec2d(10, 20), gameCanvas, scoreText, playButton)
         playButton.setOnAction(e => gameEngine.startGame())
+
         val anchorPane = new AnchorPane()
         anchorPane.getChildren.addAll(gameCanvas, playButton)
         AnchorPane.setTopAnchor(playButton,gameCanvas.getHeight / 2)
         AnchorPane.setLeftAnchor(playButton, gameCanvas.getWidth / 2.6)
+
         stage = new PrimaryStage {
             title = "Tetris"
             scene = new Scene {
@@ -38,6 +42,7 @@ object Main extends JFXApp3 {
                         anchorPane
                     )
                 }
+
                 onKeyPressed = key => gameEngine.setPlayerAction(MoveParser.parse(key.getText))
             }
         }

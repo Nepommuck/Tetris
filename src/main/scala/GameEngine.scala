@@ -20,7 +20,7 @@ class GameEngine(private val boardSize: Vec2d, private val gameCanvas: Canvas, p
     private val startingPosition = Vec2d(boardSize.x / 2, boardSize.y - 2)
     var score: Int = 0
     private val scoring = List(0, 100, 300, 500, 800)
-    private val FPS: Int = 24
+    private val FPS: Int = 60
 
     def increaseScore(linesCleared: Int): Unit = {
         score += scoring(linesCleared)
@@ -50,7 +50,6 @@ class GameEngine(private val boardSize: Vec2d, private val gameCanvas: Canvas, p
 
     def setPlayerAction(newPlayerAction: PlayerAction): Unit = {
         playerAction = newPlayerAction
-        timeElapsed = Duration(0, SECONDS)
     }
 
 
@@ -72,8 +71,7 @@ class GameEngine(private val boardSize: Vec2d, private val gameCanvas: Canvas, p
                 gameBoard.place(playingBlock)
                 val fullRows = gameBoard.removeFullRows(playingBlock)
                 increaseScore(fullRows)
-
-                playingBlock = null
+                playing = spawnNewBlock()
             }
         }
         playerAction = null
@@ -92,18 +90,20 @@ class GameEngine(private val boardSize: Vec2d, private val gameCanvas: Canvas, p
 
             spawnNewBlock()
             gameBoard.display(playingBlock, Some(score))
+            Thread.sleep(100)
 
             val timePerFrame = Duration(1.0 / FPS, SECONDS)
             while (playing) {
                 Thread.sleep(timePerFrame.toMillis)
                 timeElapsed += timePerFrame
 
-                if (timeElapsed >= autoMovementDuration)
+                if (timeElapsed >= autoMovementDuration) {
+                    handleAction()
                     setPlayerAction(PlayerAction.MoveDown)
+                    timeElapsed = Duration(0, SECONDS)
+                }
 
                 handleAction()
-                if (playingBlock == null)
-                    playing = spawnNewBlock()
                 gameBoard.display(playingBlock, Some(score))
             }
             gameBoard.displayGameOver()
