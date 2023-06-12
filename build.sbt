@@ -25,3 +25,6 @@ lazy val root = (project in file("."))
 fork := true
 
 mainClass := Some("tetris.Main")
+
+// Test library
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.11" % Test

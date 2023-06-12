@@ -13,7 +13,10 @@ class Vec2d(val x: Int, val y: Int) {
             case RotateDirection.RotateLeft => Vec2d(-y, x)
             case RotateDirection.RotateRight => Vec2d(y, -x)
     }
-
+    
+    def unary_- : Vec2d =
+        Vec2d(-x, -y)
+    
     @targetName("add")
     def +(other: Vec2d): Vec2d =
         Vec2d(x + other.x, y + other.y)
