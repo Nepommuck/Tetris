@@ -20,7 +20,7 @@ class GameEngine(private val boardSize: Vec2d, private val gameCanvas: Canvas, p
     private val startingPosition = Vec2d(boardSize.x / 2, boardSize.y - 2)
     var score: Int = 0
     private val scoring = List(0, 100, 300, 500, 800)
-    private val FPS: Int = 60
+    private val FPS: Int = 24
 
     def increaseScore(linesCleared: Int): Unit = {
         score += scoring(linesCleared)
