@@ -1,5 +1,5 @@
 import org.scalatest.funsuite.AnyFunSuite
-import Utils.Vec2d
+import Utils.{Vec2d, RotateDirection}
 
 
 class Vec2dTest extends AnyFunSuite:
@@ -87,4 +87,16 @@ class Vec2dTest extends AnyFunSuite:
         assert(Vec2d(3, 1).toString === "v(3, 1)")
         assert(Vec2d(0, 1111).toString === "v(0, 1111)")
         assert(Vec2d(-18, -81).toString === "v(-18, -81)")
+    }
+
+    test("Vec2d rotate right") {
+        assert(Vec2d(3, 1).rotated(RotateDirection.RotateRight) === Vec2d(1, -3))
+        assert(Vec2d(-2, 15).rotated(RotateDirection.RotateRight) === Vec2d(15, 2))
+        assert(Vec2d(0, 0).rotated(RotateDirection.RotateRight) === Vec2d(0, 0))
+    }
+
+    test("Vec2d rotate left") {
+        assert(Vec2d(3, 1).rotated(RotateDirection.RotateLeft) === Vec2d(-1, 3))
+        assert(Vec2d(-2, 15).rotated(RotateDirection.RotateLeft) === Vec2d(-15, -2))
+        assert(Vec2d(0, 0).rotated(RotateDirection.RotateLeft) === Vec2d(0, 0))
     }
