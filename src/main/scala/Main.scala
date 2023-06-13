@@ -25,7 +25,7 @@ object Main extends JFXApp3 {
         playButton.setFocusTraversable(false)
 
         val gameEngine = new GameEngine(Vec2d(10, 20), gameCanvas, scoreText, playButton)
-        playButton.setOnAction(e => gameEngine.startGame())
+        playButton.setOnAction(* => gameEngine.startGame())
 
         val anchorPane = new AnchorPane()
         anchorPane.getChildren.addAll(gameCanvas, playButton)
@@ -42,7 +42,6 @@ object Main extends JFXApp3 {
                         anchorPane
                     )
                 }
-
                 onKeyPressed = key => gameEngine.setPlayerAction(MoveParser.parse(key.getText))
             }
         }

@@ -84,6 +84,7 @@ class GameEngine(private val boardSize: Vec2d, private val gameCanvas: Canvas, p
             while (!playing) {
                 Thread.sleep(50)
             }
+            playerAction = null
             score = 0
             scoreText.text = "Score: 0"
             playButton.visible = false

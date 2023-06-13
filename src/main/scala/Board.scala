@@ -1,7 +1,6 @@
 import scala.collection.mutable.ArrayBuffer
 import Blocks.{Block, PlayingBlock, SteadyBlock}
 import Utils.{MoveDirection, RotateDirection, Vec2d}
-import com.sun.tools.classfile.TypeAnnotation.Position
 import scalafx.scene.canvas.Canvas
 import scalafx.scene.paint.Color
 import scalafx.scene.text.Font
@@ -105,7 +104,15 @@ class Board(val width: Int, val height: Int, private val gameCanvas: Canvas):
         fullRows.length
     }
 
+    override def toString: String = {
+        toStringWithPlayingBlock(null)
+    }
+
     def consoleDisplay(playingBlock: PlayingBlock, score: Option[Int] = None): Unit = {
+        println(toStringWithPlayingBlock(playingBlock, score))
+    }
+
+    def toStringWithPlayingBlock(playingBlock: PlayingBlock, score: Option[Int] = None): String = {
         val playingLocations: List[(Int, Int)] = getPlayingBlockLocations(playingBlock)
 
         val stringBuilder = new StringBuilder
@@ -132,7 +139,7 @@ class Board(val width: Int, val height: Int, private val gameCanvas: Canvas):
         stringBuilder.append(horizontalLine)
         stringBuilder.append('\n')
 
-        println(stringBuilder.toString())
+        stringBuilder.toString()
     }
 
     def clear(): Unit = {
@@ -175,7 +182,7 @@ class Board(val width: Int, val height: Int, private val gameCanvas: Canvas):
         gc.fill = Color.Black
         gc.fillRect(0, 0, gameCanvas.width.get, gameCanvas.height.get)
         gc.fill = Color.White
-        gc.setFont(new Font(gc.getFont.getName, 30));
+        gc.setFont(new Font(gc.getFont.getName, 30))
         gc.fillText("Game Over", gameCanvas.getWidth/4, gameCanvas.getHeight/2.2)
     }
 
