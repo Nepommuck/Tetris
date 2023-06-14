@@ -42,11 +42,11 @@ class PlayingBlockMovementTest extends AnyFunSuite {
         val blocks2 = getAllTestBlocks(Vec2d(-10, 20))
 
         for (block <- blocks1) {
-            block.move(Left(MoveDirection.Up))
+            block.move(Left(MoveDirection.Left))
             assert(block.position === Vec2d(4, 6))
         }
         for (block <- blocks2) {
-            block.move(Left(MoveDirection.Up))
+            block.move(Left(MoveDirection.Left))
             assert(block.position === Vec2d(-11, 20))
         }
     }
@@ -56,11 +56,11 @@ class PlayingBlockMovementTest extends AnyFunSuite {
         val blocks2 = getAllTestBlocks(Vec2d(-10, 20))
 
         for (block <- blocks1) {
-            block.move(Left(MoveDirection.Up))
+            block.move(Left(MoveDirection.Right))
             assert(block.position === Vec2d(6, 6))
         }
         for (block <- blocks2) {
-            block.move(Left(MoveDirection.Up))
+            block.move(Left(MoveDirection.Right))
             assert(block.position === Vec2d(-9, 20))
         }
     }
